@@ -6,5 +6,6 @@ public enum TIMER_STATES
     SESSION,
     SHORT_BREAK, 
     LONG_BREAK,
+    PAUSED
 
 }

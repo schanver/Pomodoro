@@ -3,15 +3,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,15 +18,18 @@ public class App extends JFrame
     private JLabel sessionAmount, timerLabel, stateLabel;
     private int minutes = 25;
     private int seconds = 0;
-    private int pomodoroCount = 0;
+    protected int sessionsCompleted = 0;
+    protected int totalMinutesWorked = 0;
+    public Log_Updater lUpdater = new Log_Updater();
     public TIMER_STATES currentState;
-    boolean isRunning = false;
+    Logic logic = new Logic();
+    
 
-    Font buttonFont = new Font("Arial", Font.BOLD, 11);
+    Font buttonFont = new Font("Arial", Font.BOLD, 10);
 
     public App()
     {
-        
+        // The Frame
         final int WIDTH = 300;
         final int HEIGHT = 300;
         this.setResizable(false);
@@ -46,7 +40,7 @@ public class App extends JFrame
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         
-        // Set Current State to IDLE 
+        // Set Initial State to IDLE 
         currentState = TIMER_STATES.IDLE;
 
         // Timer and State Panels
@@ -71,11 +65,11 @@ public class App extends JFrame
         stateLabel.setBounds(50, 10, 200, 60);
         stateLabel.setBackground(Color.black);
         stateLabel.setForeground(Color.white);
-        stateLabel.setFont(new Font("Arial", Font.BOLD, 27));
+        stateLabel.setFont(new Font("Arial", Font.BOLD, 24));
         statePanel.add(stateLabel);
 
         // Amount of pomodoros done
-        sessionAmount = new JLabel("Pomodoros: "+ pomodoroCount);
+        sessionAmount = new JLabel("Pomodoros: " + sessionsCompleted);
         sessionAmount.setBounds(90, 220, 120, 30);
         sessionAmount.setBackground(Color.black);
         sessionAmount.setForeground(Color.white);
@@ -90,35 +84,9 @@ public class App extends JFrame
         startButton.setBackground(Color.black);
         startButton.setForeground(Color.white);
         startButton.setFont(buttonFont);
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                
-                if( currentState == TIMER_STATES.IDLE )
-                {
-                    if( stateLabel.getText().equals("SESSION"))
-                    {
-                        currentState = TIMER_STATES.SESSION;
-                        toggleTimer();
-                        updateTimer();
-                    }
-                    else if( stateLabel.getText().equals("SHORT BREAK") )
-                    {
-                        currentState = TIMER_STATES.SHORT_BREAK;
-                        toggleTimer();
-                        updateTimer();
-                    }
-                    else if( stateLabel.getText().equals("LONG BREAK") )
-                    {
-                        currentState = TIMER_STATES.LONG_BREAK;
-                        toggleTimer();
-                        updateTimer();
-                    }
-                
-                
-                }
-                timer.start();
-        }});
+        
+        
+       
         
 
         resetButton = new JButton("Reset");
@@ -127,22 +95,7 @@ public class App extends JFrame
         resetButton.setBackground(Color.black);
         resetButton.setForeground(Color.white);
         resetButton.setFont(buttonFont);
-        if( currentState == TIMER_STATES.LONG_BREAK || currentState == TIMER_STATES.SHORT_BREAK)
-        {
-            resetButton.setEnabled(false);
-        }
-        else
-        {
-            resetButton.setEnabled(true);
-        }
-        resetButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetTimer();
-            }
-            
-        });
+        
 
         // Skip Button (only for break times)
         skipButton =  new JButton("Skip");
@@ -151,44 +104,10 @@ public class App extends JFrame
         skipButton.setBackground(Color.black);
         skipButton.setForeground(Color.white);
         skipButton.setFont(buttonFont);
-        if( currentState != TIMER_STATES.SHORT_BREAK || currentState != TIMER_STATES.LONG_BREAK )
-        {
-            skipButton.setEnabled(false);
-        }
-        else
-        {
-            skipButton.setEnabled(true);
-        }
         
-        skipButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                switchStates();
-            }
-            
-        });
+       
 
         
-        timer = new Timer(1000, new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //if( currentState != TIMER_STATES.IDLE && currentState != TIMER_STATES.PAUSED )
-                //{
-                    updateTimer();
-               // }
-              
-                
-            }
-            
-        });
-        timer.setRepeats(false);
-            if( currentState != TIMER_STATES.IDLE )
-            {
-                timer.start();
-            }
-
 
 
         this.add(startButton);
@@ -200,112 +119,7 @@ public class App extends JFrame
         
     }
 
-    // It's the basic countdown method bro, what's there not to understand
-    /*private void updateTimer()
-    {
-        if( currentState != TIMER_STATES.IDLE && currentState != TIMER_STATES.PAUSED)
-        {
-
-            if(minutes == 0 && seconds == 0)
-            {
-                if( currentState == TIMER_STATES.SESSION)
-                {
-                    pomodoroCount++;
-                }
-                switchStates();
-            
-            }
-            else {
-                if (seconds == 0) {
-                    minutes--;
-                    seconds = 59;
-                } else {
-                    seconds--;
-                }
-            }
-            updateTimerLabel();
-        }
-
-    }*/
-    private void updateTimer() {
-        if (currentState != TIMER_STATES.IDLE ) {
-            if (minutes == 0 && seconds == 0) {
-                if (currentState == TIMER_STATES.SESSION) {
-                    pomodoroCount++;
-                }
-                switchStates();
-                timer.stop(); // Stop the timer when it reaches 0:00
-            } else {
-                if (seconds == 0) {
-                    minutes--;
-                    seconds = 59;
-                } else {
-                    seconds--;
-                }
-            }
-            updateTimerLabel();
-        }
-    }
-   
-
-    // Formatting the timer label so it looks like 00:08 instead of 0:8
-    private void updateTimerLabel() {
-            String formattedTime = String.format("%02d:%02d", minutes, seconds);
-            timerLabel.setText(formattedTime);
-    }
-    // Changing the name og the button according to the state 
-    private void toggleTimer() // TODO This shit is causing me headaches. Find a way to fix it.
-    {
-        if ( currentState != TIMER_STATES.IDLE ) {
-            currentState = TIMER_STATES.;
-            startButton.setText("Resume");
-            timer.stop();
-        } else if( currentState == TIMER_STATES.PAUSED ) {
-            currentState = TIMER_STATES.RUNNING;
-            startButton.setText("Pause");
-            timer.start();
-        }
-    }
-    // Resetting the timer according to the state 
-    private void resetTimer()
-    {
-        if( currentState == TIMER_STATES.SESSION )
-        {
-            minutes = 25;
-            seconds = 0;
-            toggleTimer();
-            currentState = TIMER_STATES.IDLE;
-        }
-    }
-    // Skipping the states or switching to break time after a session
-    public void switchStates()
-    {
-        if( currentState == TIMER_STATES.SESSION )
-        {
-            resetButton.setEnabled(true);
-            if( pomodoroCount % 4 == 0 )
-            {
-                currentState = TIMER_STATES.LONG_BREAK;
-                stateLabel.setText("LONG BREAK");
-                minutes = 20;
-                seconds = 0;
-            }
-            else
-            {
-                currentState = TIMER_STATES.SHORT_BREAK;
-                stateLabel.setText("SHORT BREAK");
-                minutes = 5;
-                seconds = 0;
-            }
-        }
-        else if( currentState == TIMER_STATES.SHORT_BREAK || currentState == TIMER_STATES.LONG_BREAK )
-        {
-            currentState = TIMER_STATES.SESSION;
-            stateLabel.setText("SESSION");
-            minutes = 25;
-            seconds = 0;
-        }
-    }
+    
     
    
     
@@ -315,7 +129,6 @@ public class App extends JFrame
             @Override
             public void run() {
                 new App();
-                
             }
         });
         }
