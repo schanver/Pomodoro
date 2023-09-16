@@ -146,7 +146,6 @@ public class App extends JFrame
         audioBackwardButton.setFont(buttonFont);
         
         //Audio Forward Button (This button starts the next song )
-        // TODO draw the button icons
         audioForwardButton = new JButton(icons.setIcon("resources/next_song.png", 70, 40));
         audioForwardButton.setBounds(275, 260, 70, 40);
         audioForwardButton.setFocusPainted(false);
