@@ -14,7 +14,8 @@ public class App extends JFrame
     protected JButton startButton, resetButton, skipButton, audioStartButton, audioForwardButton, audioBackwardButton, rainButton;
     protected JPanel timerPanel, statePanel;
     protected JLabel sessionAmount, timerLabel, stateLabel, songName, progressBar;
-    boolean rainButtonPressed = false;
+    
+ 
 
     
     public Log_Updater lUpdater = new Log_Updater();
@@ -137,7 +138,7 @@ public class App extends JFrame
         skipButton.setFont(buttonFont);
         
         //Audio Backwards Button (This button restarts the audio from the beginning)
-        audioBackwardButton = new JButton(icons.setIcon("src/resources/restart.png", 70, 40));
+        audioBackwardButton = new JButton(icons.setIcon("resources/restart.png", 70, 40));
         audioBackwardButton.setBounds(105, 260, 70, 40);
         audioBackwardButton.setFocusPainted(false);
         audioBackwardButton.setBackground(Color.black);
@@ -146,7 +147,7 @@ public class App extends JFrame
         
         //Audio Forward Button (This button starts the next song )
         // TODO draw the button icons
-        audioForwardButton = new JButton(icons.setIcon("src/resources/next_song.png", 70, 40));
+        audioForwardButton = new JButton(icons.setIcon("resources/next_song.png", 70, 40));
         audioForwardButton.setBounds(275, 260, 70, 40);
         audioForwardButton.setFocusPainted(false);
         audioForwardButton.setBackground(Color.black);
@@ -154,14 +155,33 @@ public class App extends JFrame
         audioForwardButton.setFont(buttonFont);
         
         // Audio Start Button
-        audioStartButton = new JButton(icons.setIcon("src/resources/start.png", 50, 40));
+        audioStartButton = new JButton(icons.setIcon("resources/start.png", 50, 40));
         audioStartButton.setBounds(175, 260, 50, 40);
         audioStartButton.setFocusPainted(false);
         audioStartButton.setBackground(Color.black);
         audioStartButton.setForeground(Color.white);
+        audioStartButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               if ( audio.audioStartButtonPressed )
+               {
+                 audio.audioStartButtonPressed = false;
+                 audioStartButton.setIcon(icons.setIcon("resources/start.png", 50, 40));
+
+               }
+               else 
+               {
+                audio.audioStartButtonPressed = true;
+                audioStartButton.setIcon(icons.setIcon("resources/pause.png", 50, 40));
+               }
+               
+            }
+            
+        });
         
         // Rain Button
-        rainButton = new JButton(icons.setIcon("src/resources/rain.png", 50, 40));
+        rainButton = new JButton(icons.setIcon("resources/rainy.png", 50, 40));
         rainButton.setBounds(225, 260, 50, 40);
         rainButton.setBackground(Color.black);
         rainButton.setForeground(Color.white);
@@ -169,15 +189,17 @@ public class App extends JFrame
 
             @Override
             public void actionPerformed(ActionEvent e) {
-              if( !rainButtonPressed ) // TODO draw the stop rain icon
+              if( !audio.rainButtonPressed ) 
               {
-                   rainButtonPressed = true;  
+                   audio.rainButtonPressed = true;  
+                   rainButton.setIcon(icons.setIcon("resources/not_rainy.png", 50, 40));
               }
               else
               {
-                rainButtonPressed = false;
+                audio.rainButtonPressed = false;
+                rainButton.setIcon(icons.setIcon("resources/rainy.png", 50, 40));
               }
-              audio.ringTone(1);
+              audio.startRain();
             }
             
         });
