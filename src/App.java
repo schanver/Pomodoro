@@ -3,10 +3,17 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.sound.sampled.FloatControl;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+
 
 
 public class App extends JFrame
@@ -14,16 +21,17 @@ public class App extends JFrame
     protected JButton startButton, resetButton, skipButton, audioStartButton, audioForwardButton, audioBackwardButton, rainButton;
     protected JPanel timerPanel, statePanel;
     protected JLabel sessionAmount, timerLabel, stateLabel, songName, progressBar;
+    protected JSlider volumeSlider;
     
- 
 
     
     public Log_Updater lUpdater = new Log_Updater();
-    public Audio audio = new Audio();
+   
     
     Icons icons = new Icons();
     TIMER_STATES currentState = TIMER_STATES.IDLE;
     TimerManager tm = new TimerManager(currentState, this);
+    Audio audio = new Audio(this, tm);
 
     Font buttonFont = new Font("Arial", Font.BOLD, 10);
     
@@ -87,22 +95,30 @@ public class App extends JFrame
         startButton.setBackground(Color.black);
         startButton.setForeground(Color.white);
         startButton.setFont(buttonFont);
-        startButton.addActionListener(new ActionListener() {  // TODO I have no fucking idea how to make this work... Maybe ask Utku or Leon?
+        startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (currentState == TIMER_STATES.IDLE) {
-                    tm.start();
-                    tm.checkButtonEnability();
+                    tm.start();  // Start the timer
+                    currentState = TIMER_STATES.SESSION;  // Update the timer state
+                    startButton.setText("Pause");  // Change button text
                 } else if (currentState == TIMER_STATES.SESSION) {
-                    tm.stop();
-                    tm.checkButtonEnability();
-                } else {
-                    tm.checkButtonEnability();
+                    tm.stop();  // Pause the timer
+                    currentState = TIMER_STATES.PAUSED;  // Update the timer state
+                    startButton.setText("Resume");  // Change button text
+                } else if (currentState == TIMER_STATES.PAUSED) {
+                    tm.start();  // Resume the timer
+                    currentState = TIMER_STATES.SESSION;  // Update the timer state
+                    startButton.setText("Pause");  // Change button text
                 }
-                toggleTimer();
+        
+                
+                tm.checkButtonEnability();
                 tm.updateTimer();
             }
         });
+        
+        
         
         
         
@@ -118,14 +134,9 @@ public class App extends JFrame
             @Override
             public void actionPerformed( ActionEvent e )
             {
-                if( currentState == TIMER_STATES.IDLE )
+                if( currentState == TIMER_STATES.IDLE || currentState == TIMER_STATES.SESSION || currentState == TIMER_STATES.PAUSED ) 
                 { tm.resetTimer(); }
-
-                else if( currentState == TIMER_STATES.SESSION )
-                { tm.resetTimer(); }
-
-                else 
-                { resetButton.setEnabled(false); }
+                
             }
         });
         
@@ -159,22 +170,19 @@ public class App extends JFrame
         audioStartButton.setFocusPainted(false);
         audioStartButton.setBackground(Color.black);
         audioStartButton.setForeground(Color.white);
-        audioStartButton.addActionListener(new ActionListener() {
+        audioStartButton.addActionListener(new ActionListener() {  //TODO fix this brah...
 
             @Override
             public void actionPerformed(ActionEvent e) {
                if ( audio.audioStartButtonPressed )
                {
-                 audio.audioStartButtonPressed = false;
                  audioStartButton.setIcon(icons.setIcon("resources/start.png", 50, 40));
-
                }
                else 
                {
-                audio.audioStartButtonPressed = true;
                 audioStartButton.setIcon(icons.setIcon("resources/pause.png", 50, 40));
                }
-               
+               audio.playAudio();
             }
             
         });
@@ -219,6 +227,32 @@ public class App extends JFrame
         progressBar.setFont(new Font("Purisa", Font.BOLD, 15));
         progressBar.setHorizontalAlignment(JLabel.HORIZONTAL);
         
+        // Volume Slider
+        volumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+        volumeSlider.setBounds(370, 0, 80, 50);
+        volumeSlider.setBackground(Color.black);
+        volumeSlider.setForeground(Color.white);
+        volumeSlider.setMajorTickSpacing(10);
+        volumeSlider.setMinorTickSpacing(5);
+        volumeSlider.setPaintTicks(true);
+        
+        //volumeSlider.setPaintLabels(true);
+        this.add(volumeSlider);
+        volumeSlider.addChangeListener(new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+                if( audio.clip!= null )
+                {
+                int volume = volumeSlider.getValue(); // Get the current slider value (0-100)
+                // Adjust the volume of the audio , using the 'volume' value
+                FloatControl gainControl = (FloatControl) audio.clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float volumeLevel = volume / 100.0f; // Convert to a float between 0 and 1
+                gainControl.setValue(volumeLevel); // Adjust the volume of the audio clip  
+                }
+            }
+        });
+
+
 
        
         
