@@ -2,7 +2,6 @@ package src;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
@@ -15,38 +14,67 @@ import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class Audio 
-{   
-    ArrayList<String> tunes = new ArrayList<>();
+public class Audio {
+
     Clip clip, rainClip, ringClip;
-    Random random = new Random();
-    String song_Name = "0-lofi_song.wav";
+   
+
+    String song_Name = "";
     boolean rainButtonPressed = false;
     boolean audioStartButtonPressed = false;
+    int previousSongIndex, indexSlash;
+    long pausedPosition;
 
-    private int previousSongIndex;
+    ArrayList<String> tunes = new ArrayList<>();
 
+    Random random = new Random();
+    Icons icons = new Icons();
+    App app;
 
-    public void playAudio()
+    
+
+   public Audio(App app, TimerManager tm)
+    {
+    this.app = app;
+    tunes.add("resources/audio/KNB.wav");
+    
+        
+    }
+    /*public void stopAudio()
+    {
+        if( clip!= null && clip.isRunning())
+        {
+            clip.stop();
+        }
+    }*/
+
+    public void playAudio()  //TODO fix the bugs
     {
         
         if( clip != null && clip.isRunning())
         {
             audioStartButtonPressed = !audioStartButtonPressed;
-            if(audioStartButtonPressed)
-            {
+            if( audioStartButtonPressed)
+            {   
+                pausedPosition = clip.getMicrosecondPosition();
                 clip.stop();
             }
             else
             {
+                clip.setMicrosecondPosition(pausedPosition);
                 clip.start();
             }
+            
         }
         else 
         {
             // Choose a random index except the first two, which are the rain sound and the ringtone.
-            int index = random.nextInt(tunes.size() - 2) + 2;
+            int index = 0;//random.nextInt(tunes.size() - 2) + 2;
             String songFilePath = tunes.get(index);
+            indexSlash = songFilePath.lastIndexOf("/");
+            song_Name = (indexSlash > 0)? songFilePath.substring(indexSlash + 1) : songFilePath;
+            app.songName.setText(song_Name);
+            
             try 
             {
                 
@@ -105,7 +133,7 @@ public class Audio
         {
             try 
             {
-                int index = 1;
+                int index = 0;
                 String filePath = tunes.get(index);
                 File audioFile = new File(filePath);
                 URL url = audioFile.toURI().toURL();
@@ -124,7 +152,7 @@ public class Audio
 
     public void nextSong()
     {
-        int index = random.nextInt(tunes.size() - 2) + 2;
+            int index = random.nextInt(tunes.size() - 2) + 2;
             if(previousSongIndex == index)
             {
                 index = random.nextInt(tunes.size() - 2) + 2;

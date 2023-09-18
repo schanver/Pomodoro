@@ -11,8 +11,10 @@ public class TimerManager  {
     protected int sessionsCompleted = 0;
     protected int totalMinutesWorked = 0;
    
-    protected Log_Updater lUpdater = new Log_Updater();
+    Log_Updater lUpdater = new Log_Updater();
+    Notifications notifications = new Notifications();
     App app;
+    Audio audio = new Audio(app, this);
 
 
     public TimerManager(TIMER_STATES initialState, App app ) {
@@ -26,7 +28,7 @@ public class TimerManager  {
                 updateTimer();
             }
         });
-        timer.setRepeats(false);
+        timer.setRepeats(true);
     }
 
     public void start() {
@@ -36,20 +38,17 @@ public class TimerManager  {
     }
     
     
-
-    public void updateTimer() {
+   
+    public void updateTimer() {  //MAKE A FCKING LOGIC CHART FOR THIS FUNCTION DUMBASS, DON'T TRY TO BRUTE-FORCE IT
         if (minutes == 0 && seconds == 0) {
             if (app.currentState == TIMER_STATES.SESSION) {
                 sessionsCompleted++;
                 lUpdater.logSessionData(sessionsCompleted, totalMinutesWorked);
-            }
-            
-            // Check if it's a break, and stop the timer if it is
-            if (app.currentState == TIMER_STATES.SHORT_BREAK || app.currentState == TIMER_STATES.LONG_BREAK) {
-                stop();
-            } else {
+                audio.ringTone(0);
+                notifications.showNotification("End of the Session", "Your session is over. Enjoy your hard earned break!", null);
+                }
                 switchStates();
-            }
+    
         } else {
             if (seconds == 0) {
                 seconds = 59;
@@ -71,54 +70,42 @@ public class TimerManager  {
 
     public void resetTimer()
     {
-        if( app.currentState == TIMER_STATES.SESSION || app.currentState == TIMER_STATES.IDLE )
+        if( app.currentState == TIMER_STATES.SESSION || app.currentState == TIMER_STATES.IDLE || app.currentState == TIMER_STATES.PAUSED )
         {
             minutes = 25;
             seconds = 0;
-            updateTimerLabel();
+            app.currentState = TIMER_STATES.IDLE;
+            updateTimer();
             app.startButton.setText("Start");
         }
         
     }
     public void checkButtonEnability()
     {
-        if( app.currentState == TIMER_STATES.SESSION )
+        if( app.currentState == TIMER_STATES.SESSION || app.currentState == TIMER_STATES.PAUSED || app.currentState == TIMER_STATES.IDLE )
         {
             app.startButton.setEnabled(true);
             app.resetButton.setEnabled(true);
             app.skipButton.setEnabled(false);
         }
-        else if( app.currentState == TIMER_STATES.SHORT_BREAK )
+
+        if( app.currentState == TIMER_STATES.SHORT_BREAK || app.currentState == TIMER_STATES.LONG_BREAK )
         {
             app.skipButton.setEnabled(true);
             app.startButton.setEnabled(false);
             app.resetButton.setEnabled(false);
         }
-        else if( app.currentState == TIMER_STATES.LONG_BREAK )
-        {
-            app.skipButton.setEnabled(true);
-            app.startButton.setEnabled(false);
-            app.resetButton.setEnabled(false);
-        }
-        else if( app.currentState == TIMER_STATES.PAUSED )
-        {
-            app.startButton.setEnabled(true);
-            app.resetButton.setEnabled(true);
-            app.skipButton.setEnabled(false);
-        }
-        else if( app.currentState == TIMER_STATES.IDLE )
-        {
-            app.startButton.setEnabled(true);
-            app.resetButton.setEnabled(true);
-            app.skipButton.setEnabled(false);
-        }
+        
+        
     }
-    public void switchStates() {
+    public void switchStates() 
+    {
         if (app.currentState == TIMER_STATES.SESSION) {
             if (sessionsCompleted > 0 && sessionsCompleted % 4 == 0) {
                 app.currentState = TIMER_STATES.LONG_BREAK;
                 minutes = 15;
                 seconds = 0;
+                
             } else {
                 app.currentState = TIMER_STATES.SHORT_BREAK;
                 minutes = 5;
@@ -130,15 +117,17 @@ public class TimerManager  {
             seconds = 0;
         }
     
-        // Call updateTimerLabel() only once after updating minutes and seconds
+        // Call updateTimer only once after updating minutes and seconds
         updateTimer();
+        
     }
     
     
-    public void updateTimerLabel() {
+    public void updateTimerLabel() 
+    {
         String formattedTime = String.format("%02d:%02d", minutes, seconds);
         app.timerLabel.setText(formattedTime);
-        }
+    }
 
     
     
