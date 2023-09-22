@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.sound.sampled.FloatControl;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -36,7 +35,7 @@ public class App extends JFrame
     Font buttonFont = new Font("Arial", Font.BOLD, 10);
     
 
-    public void makeUI() 
+    public void makeUI()
     {
         
 
@@ -90,7 +89,7 @@ public class App extends JFrame
 
         // Start Button
         startButton = new JButton("Start");
-        startButton.setBounds(120, 150, 70, 30);
+        startButton.setBounds(105, 150, 80, 30);
         startButton.setFocusPainted(false);
         startButton.setBackground(Color.black);
         startButton.setForeground(Color.white);
@@ -117,15 +116,11 @@ public class App extends JFrame
                 tm.updateTimer();
             }
         });
-        
-        
-        
-        
-        
+       
         
         // Reset Button 
         resetButton = new JButton("Reset");
-        resetButton.setBounds(190, 150, 70, 30);
+        resetButton.setBounds(185, 150, 80, 30);
         resetButton.setFocusPainted(false);
         resetButton.setBackground(Color.black);
         resetButton.setForeground(Color.white);
@@ -142,11 +137,19 @@ public class App extends JFrame
         
         // Skip Button (only for break times)
         skipButton =  new JButton("Skip");
-        skipButton.setBounds(260, 150, 70, 30);
+        skipButton.setBounds(265, 150, 80, 30);
         skipButton.setFocusPainted(false);
         skipButton.setBackground(Color.black);
         skipButton.setForeground(Color.white);
         skipButton.setFont(buttonFont);
+        skipButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               tm.switchStates();
+            }
+            
+        });
         
         //Audio Backwards Button (This button restarts the audio from the beginning)
         audioBackwardButton = new JButton(icons.setIcon("resources/restart.png", 70, 40));
@@ -155,6 +158,12 @@ public class App extends JFrame
         audioBackwardButton.setBackground(Color.black);
         audioBackwardButton.setForeground(Color.white);
         audioBackwardButton.setFont(buttonFont);
+        audioBackwardButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                audio.restartAudio();
+            }
+        });
         
         //Audio Forward Button (This button starts the next song )
         audioForwardButton = new JButton(icons.setIcon("resources/next_song.png", 70, 40));
@@ -163,6 +172,13 @@ public class App extends JFrame
         audioForwardButton.setBackground(Color.black);
         audioForwardButton.setForeground(Color.white);
         audioForwardButton.setFont(buttonFont);
+        audioForwardButton.addActionListener(new ActionListener() {
+           
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                audio.nextSong();
+            }
+        });
         
         // Audio Start Button
         audioStartButton = new JButton(icons.setIcon("resources/start.png", 50, 40));
@@ -174,14 +190,6 @@ public class App extends JFrame
 
             @Override
             public void actionPerformed(ActionEvent e) {
-               if ( audio.audioStartButtonPressed )
-               {
-                 audioStartButton.setIcon(icons.setIcon("resources/start.png", 50, 40));
-               }
-               else 
-               {
-                audioStartButton.setIcon(icons.setIcon("resources/pause.png", 50, 40));
-               }
                audio.playAudio();
             }
             
@@ -291,7 +299,12 @@ public class App extends JFrame
             
         }
     }
-    
+    public void handleShutdown() {
+        if (currentState == TIMER_STATES.SESSION) {
+            // Update the log with the current minutes worked
+            lUpdater.logSessionData(tm.sessionsCompleted, tm.totalMinutesWorked);
+        }
+    }
    
      
 
