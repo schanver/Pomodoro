@@ -40,13 +40,35 @@ public class Audio {
     
         
     }
-    /*public void stopAudio()
+    public void restartAudio()
+    {
+        if(clip != null )
+        {
+            clip.setMicrosecondPosition(0);
+            clip.start();
+            
+        }
+    }
+    public void startAudio()
+    {
+        if( clip!= null )
+        {
+            clip.setMicrosecondPosition(pausedPosition);
+            clip.start();
+            app.audioStartButton.setIcon(icons.setIcon("resources/pause.png", 50, 40));
+
+        }
+    }
+
+    public void stopAudio()
     {
         if( clip!= null && clip.isRunning())
         {
             clip.stop();
+            app.audioStartButton.setIcon(icons.setIcon("resources/start.png", 50, 40));
+            pausedPosition = clip.getMicrosecondPosition();
         }
-    }*/
+    }
 
     public void playAudio()  //TODO fix the bugs
     {
@@ -57,12 +79,12 @@ public class Audio {
             if( audioStartButtonPressed)
             {   
                 pausedPosition = clip.getMicrosecondPosition();
-                clip.stop();
+                stopAudio();
             }
             else
             {
                 clip.setMicrosecondPosition(pausedPosition);
-                clip.start();
+                startAudio();
             }
             
         }
@@ -86,6 +108,7 @@ public class Audio {
                     @Override
                     public void update(LineEvent event) { // Choose a new Song to play if the song ends.
                         if (event.getType() == LineEvent.Type.STOP) {
+                            pausedPosition = 0;
                             previousSongIndex = index;
                             nextSong();
                         }
@@ -133,7 +156,7 @@ public class Audio {
         {
             try 
             {
-                int index = 0;
+                int index = 1;
                 String filePath = tunes.get(index);
                 File audioFile = new File(filePath);
                 URL url = audioFile.toURI().toURL();
@@ -152,6 +175,10 @@ public class Audio {
 
     public void nextSong()
     {
+            if( clip!= null && clip.isRunning())
+            {
+                clip.stop();
+            }
             int index = random.nextInt(tunes.size() - 2) + 2;
             if(previousSongIndex == index)
             {
