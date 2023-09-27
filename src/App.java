@@ -3,14 +3,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.sound.sampled.FloatControl;
+import java.util.Date;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 
 
@@ -20,17 +18,16 @@ public class App extends JFrame
     protected JButton startButton, resetButton, skipButton, audioStartButton, audioForwardButton, audioBackwardButton, rainButton;
     protected JPanel timerPanel, statePanel;
     protected JLabel sessionAmount, timerLabel, stateLabel, songName, progressBar;
-    protected JSlider volumeSlider;
+   
     
 
     
     public Log_Updater lUpdater = new Log_Updater();
-   
-    
     Icons icons = new Icons();
     TIMER_STATES currentState = TIMER_STATES.IDLE;
     TimerManager tm = new TimerManager(currentState, this);
     Audio audio = new Audio(this, tm);
+    
 
     Font buttonFont = new Font("Arial", Font.BOLD, 10);
     
@@ -43,7 +40,7 @@ public class App extends JFrame
         final int WIDTH = 450;
         final int HEIGHT = 450;
         this.setResizable(false);
-        this.setTitle("Pomodoro Timer");
+        this.setTitle("Pomodoro Timer 🍅 ");
         this.setSize(WIDTH, HEIGHT);
         this.getContentPane().setBackground(Color.black);
         this.setLayout(null);
@@ -62,7 +59,9 @@ public class App extends JFrame
         statePanel.setBackground(Color.black);
 
         // Timer Label
-        timerLabel = new JLabel("25:00");
+        tm.minutes  = TimerEditor.getSessionMinutes();
+        timerLabel = new JLabel(tm.minutes+":"+tm.seconds);
+        tm.updateTimerLabel();
         timerLabel.setBounds(50, 75, 200, 50);
         timerLabel.setFont(new Font("Arial", Font.BOLD, 34));
         timerLabel.setBackground(Color.black);
@@ -98,6 +97,7 @@ public class App extends JFrame
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (currentState == TIMER_STATES.IDLE) {
+                    tm.startTime = new Date();
                     tm.start();  // Start the timer
                     currentState = TIMER_STATES.SESSION;  // Update the timer state
                     startButton.setText("Pause");  // Change button text
@@ -235,30 +235,7 @@ public class App extends JFrame
         progressBar.setFont(new Font("Purisa", Font.BOLD, 15));
         progressBar.setHorizontalAlignment(JLabel.HORIZONTAL);
         
-        // Volume Slider
-        volumeSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
-        volumeSlider.setBounds(370, 0, 80, 50);
-        volumeSlider.setBackground(Color.black);
-        volumeSlider.setForeground(Color.white);
-        volumeSlider.setMajorTickSpacing(10);
-        volumeSlider.setMinorTickSpacing(5);
-        volumeSlider.setPaintTicks(true);
         
-        //volumeSlider.setPaintLabels(true);
-        this.add(volumeSlider);
-        volumeSlider.addChangeListener(new ChangeListener() {
-        @Override
-        public void stateChanged(ChangeEvent e) {
-                if( audio.clip!= null )
-                {
-                int volume = volumeSlider.getValue(); // Get the current slider value (0-100)
-                // Adjust the volume of the audio , using the 'volume' value
-                FloatControl gainControl = (FloatControl) audio.clip.getControl(FloatControl.Type.MASTER_GAIN);
-                float volumeLevel = volume / 100.0f; // Convert to a float between 0 and 1
-                gainControl.setValue(volumeLevel); // Adjust the volume of the audio clip  
-                }
-            }
-        });
 
 
 
@@ -302,7 +279,7 @@ public class App extends JFrame
     public void handleShutdown() {
         if (currentState == TIMER_STATES.SESSION) {
             // Update the log with the current minutes worked
-            lUpdater.logSessionData(tm.sessionsCompleted, tm.totalMinutesWorked);
+            lUpdater.logSessionData(tm.startTime, tm.finishTime,tm.sessionsCompleted, tm.totalMinutesWorked);
         }
     }
    
