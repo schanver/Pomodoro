@@ -2,21 +2,29 @@ package src;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
+
 import javax.swing.Timer;
 
 public class TimerManager  {
     protected Timer timer;
-    protected int minutes = 1;  //TODO: Change this to 25 after testing
-    protected int seconds = 0;
-    protected int sessionsCompleted = 0;
-    protected int totalMinutesWorked = 0;
-    protected int totalSecondsWorked = 0;
-   
+
+    
+    int i = 0;
     Log_Updater lUpdater = new Log_Updater();
     Notifications notifications = new Notifications();
     App app;
     Audio audio = new Audio(app, this);
+    protected Date startTime, finishTime;
 
+    
+    int sessionMinutes;
+    int sBreakMinutes;
+    int lBreakMinutes;
+    protected int minutes = 0;  
+    protected int seconds = 0;
+    protected int sessionsCompleted = 0;
+    protected int totalMinutesWorked = 0;
 
     public TimerManager(TIMER_STATES initialState, App app ) {
         this.app = app;
@@ -31,6 +39,23 @@ public class TimerManager  {
         });
         timer.setRepeats(true);
     }
+    
+    public void setTimer()
+    {
+        switch(app.currentState)
+        {
+            case SESSION:
+            {
+                minutes = TimerEditor.getSessionMinutes();
+                break;
+            }
+            default:
+            break;
+        }
+        
+    }
+    
+  
 
     public void start() {
         // Start the timer
@@ -41,15 +66,19 @@ public class TimerManager  {
     
    
     public void updateTimer() {  /* F: MAKE A FCKING LOGIC CHART FOR THIS FUNCTION DUMBASS, DON'T TRY TO BRUTE-FORCE IT
-                                M: It works now though, my intelligence needs no logic chart! */ 
+                                    M: It works now though, my intelligence needs no logic chart! */ 
+        while( i < 1)
+        { setTimer(); i++; }
         if (minutes == 0 && seconds == 0) {
             if (app.currentState == TIMER_STATES.SESSION) {
                 sessionsCompleted++;
-                lUpdater.logSessionData(sessionsCompleted, totalMinutesWorked);
+                finishTime = new Date();
+                lUpdater.logSessionData(startTime, finishTime, sessionsCompleted, totalMinutesWorked);
                 //audio.ringTone(0);
-                //notifications.showNotification("End of the Session", "Your session is over. Enjoy your hard earned break!", null);
+                
                 }
                 switchStates();
+                
     
         } else {
             if (seconds == 0) {
@@ -75,7 +104,7 @@ public class TimerManager  {
     {
         if( app.currentState == TIMER_STATES.SESSION || app.currentState == TIMER_STATES.IDLE || app.currentState == TIMER_STATES.PAUSED )
         {
-            minutes = 25;
+            minutes = TimerEditor.getSessionMinutes();
             seconds = 0;
             app.currentState = TIMER_STATES.IDLE;
             stop();
@@ -108,23 +137,23 @@ public class TimerManager  {
             if (sessionsCompleted > 0 && sessionsCompleted % 4 == 0) {
                 app.currentState = TIMER_STATES.LONG_BREAK;
                 app.stateLabel.setText("LONG BREAK");
-                minutes = 15;
+                minutes = TimerEditor.getLongBreakMinutes();
                 seconds = 0;
                 
             } else {
                 app.currentState = TIMER_STATES.SHORT_BREAK;
                 app.stateLabel.setText("SHORT BREAK");
-                minutes = 5;
+                minutes = TimerEditor.getShortBreakMinutes();   
                 seconds = 0;
             }
         } else if (app.currentState == TIMER_STATES.SHORT_BREAK || app.currentState == TIMER_STATES.LONG_BREAK) {
             app.currentState = TIMER_STATES.SESSION;
             app.stateLabel.setText("SESSION");
-            minutes = 1; //TODO change this after the tests
+            minutes = TimerEditor.getSessionMinutes(); 
             seconds = 0;
         }
-    
-        // Call updateTimer only once after updating minutes and seconds
+        notifications.showNotification(app);
+        audio.ringTone();
         updateTimer();
         checkButtonEnability();
         
@@ -136,6 +165,8 @@ public class TimerManager  {
         String formattedTime = String.format("%02d:%02d", minutes, seconds);
         app.timerLabel.setText(formattedTime);
     }
+
+    
 
     
     
