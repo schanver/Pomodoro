@@ -14,7 +14,8 @@ import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class Audio {
+    
+public class Audio { // TODO Only this part needs to be fixed
 
     Clip clip, rainClip, ringClip;
    
@@ -36,7 +37,9 @@ public class Audio {
    public Audio(App app, TimerManager tm)
     {
     this.app = app;
-    tunes.add("resources/audio/KNB.wav");
+    tunes.add("resources/audio/0-ringtone.wav");
+    tunes.add("resources/audio/1-rain.wav");
+    tunes.add("resources/audio/2-classical.wav");
     
         
     }
@@ -91,7 +94,7 @@ public class Audio {
         else 
         {
             // Choose a random index except the first two, which are the rain sound and the ringtone.
-            int index = 0;//random.nextInt(tunes.size() - 2) + 2;
+            int index = 1;//random.nextInt(tunes.size() - 2) + 2;
             String songFilePath = tunes.get(index);
             indexSlash = songFilePath.lastIndexOf("/");
             song_Name = (indexSlash > 0)? songFilePath.substring(indexSlash + 1) : songFilePath;
@@ -120,12 +123,12 @@ public class Audio {
         }
         }
     }
-    public void ringTone(int index)
+    public void ringTone()
     {
         
         try {
             
-            String filePath = tunes.get(index);
+            String filePath = tunes.get(0);
             File audioFile = new File(filePath);
             URL url = audioFile.toURI().toURL();
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
