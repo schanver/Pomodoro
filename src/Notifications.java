@@ -3,8 +3,6 @@ package src;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Array;
-import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JButton;
@@ -39,7 +37,7 @@ public class Notifications
                                         "Start working now, and success will follow.",
                                         "You know what they say about success, it loves hardworkers.",
                                         "Early bird gets the worm! Let's get to work!",
-                                        "Make your future self proud! Let's build a good life for you!",
+                                        "Make your future self proud! Let's build a good life for you!" 
                                     };
     
         String[] breakMessages =    {
@@ -53,12 +51,13 @@ public class Notifications
                                         "Good work out there! Let's catch our breath a litte bit!"
                                     };
        
-        
+         int sessionSize = sessionMessages.length;
+         int breakSize = breakMessages.length;
         // Notification  frame
         frame = new JFrame();
         frame.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         frame.getContentPane().setBackground(Color.BLACK);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setResizable(false);
         frame.setUndecorated(true);
 
@@ -86,7 +85,7 @@ public class Notifications
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+                frame.dispose();
             }
         });
        
@@ -105,7 +104,7 @@ public class Notifications
 
             @Override
             public void actionPerformed(ActionEvent e) {
-               System.exit(0);
+              frame.dispose();
             }
             
         });
@@ -118,20 +117,20 @@ public class Notifications
         {
             case SESSION: 
             {
-                frameLabel.setText(" Break is over");
-                notificationLabel.setText(sessionMessages[random.nextInt(sessionMessages.length) - 1]);
+                frameLabel.setText("Break is over");
+                notificationLabel.setText(sessionMessages[random.nextInt(sessionSize - 1)]);
                 break;
             }
             case SHORT_BREAK:
             {
-                frameLabel.setText(" Short Break is over");
-                notificationLabel.setText(breakMessages[random.nextInt(sessionMessages.length) - 1]);
+                frameLabel.setText(" Session is over");
+                notificationLabel.setText(breakMessages[random.nextInt(breakSize - 1)]);
                 break;
             }
             case LONG_BREAK:
             {
-                frameLabel.setText(" Long Break is over");
-                notificationLabel.setText(breakMessages[random.nextInt(sessionMessages.length) - 1]);
+                frameLabel.setText(" Session is over");
+                notificationLabel.setText(breakMessages[random.nextInt(breakSize - 1)]);
                 break;
             }
             default:
