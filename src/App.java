@@ -38,7 +38,7 @@ public class App extends JFrame
 
         // The Frame
         final int WIDTH = 450;
-        final int HEIGHT = 450;
+        final int HEIGHT = 300;
         this.setResizable(false);
         this.setTitle("Pomodoro Timer 🍅 ");
         this.setSize(WIDTH, HEIGHT);
@@ -152,7 +152,7 @@ public class App extends JFrame
         });
         
         //Audio Backwards Button (This button restarts the audio from the beginning)
-        audioBackwardButton = new JButton(icons.setIcon("resources/restart.png", 70, 40));
+        /*audioBackwardButton = new JButton(icons.setIcon("resources/restart.png", 70, 40));
         audioBackwardButton.setBounds(105, 260, 70, 40);
         audioBackwardButton.setFocusPainted(false);
         audioBackwardButton.setBackground(Color.black);
@@ -233,7 +233,7 @@ public class App extends JFrame
         progressBar.setBackground(Color.black);
         progressBar.setForeground(Color.white);
         progressBar.setFont(new Font("Purisa", Font.BOLD, 15));
-        progressBar.setHorizontalAlignment(JLabel.HORIZONTAL);
+        progressBar.setHorizontalAlignment(JLabel.HORIZONTAL);*/
         
         
 
@@ -246,12 +246,12 @@ public class App extends JFrame
         this.add(skipButton);
         this.add(timerPanel);
         this.add(statePanel);
-        this.add(audioBackwardButton);
+        /*this.add(audioBackwardButton);
         this.add(audioForwardButton);
         this.add(audioStartButton);
         this.add(songName);
         this.add(progressBar);
-        this.add(rainButton);
+        this.add(rainButton);*/
         this.setVisible(true);
         
     }
