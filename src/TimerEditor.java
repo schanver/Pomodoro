@@ -19,8 +19,8 @@ public class TimerEditor {
         TimerManager tm;
         App app;
         static JFrame inputFrame;
-        static JLabel sessionLabel, shortLabel, longLabel;
-        static JTextField sessionField, shortField, longField;
+        static JLabel nameLabel,sessionLabel, shortLabel, longLabel;
+        static JTextField nameField,sessionField, shortField, longField;
         static JButton saveButton,resetButton;
         static Font labelFont = new Font("Arial", Font.PLAIN, 10);
         static Font buttonFont = new Font("Arial",Font.BOLD,8 );
@@ -32,7 +32,7 @@ public class TimerEditor {
        // Create the input frame
         inputFrame = new JFrame();
         inputFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        inputFrame.setSize(400, 300);
+        inputFrame.setSize(400, 350);
         inputFrame.setResizable(false);
         inputFrame.setLocationRelativeTo(null);
         inputFrame.getContentPane().setBackground(Color.black);
@@ -61,41 +61,48 @@ public class TimerEditor {
         sessionLabel = new JLabel("Enter the duration of sessions : (default is 45 minutes)", JLabel.HORIZONTAL);
         shortLabel = new JLabel("Enter the duration of short breaks : (default is 5 minutes)", JLabel.HORIZONTAL);
         longLabel = new JLabel("Enter the duration of long breaks : (default is 15 minutes)", JLabel.HORIZONTAL);
+		nameLabel = new  JLabel("Enter the name of the activity: (default is Study Session)", JLabel.HORIZONTAL);	
+		
+		nameLabel.setBounds(60,10,280,20);
+		nameLabel.setBackground(Color.black);
+		nameLabel.setForeground(Color.white);
+		nameLabel.setFont(labelFont);
 
-        sessionLabel.setBounds(60, 10, 280, 20);
+        sessionLabel.setBounds(60, 70, 280, 20);
         sessionLabel.setBackground(Color.BLACK);
         sessionLabel.setForeground(Color.WHITE);
         sessionLabel.setFont(labelFont);
         
-        shortLabel.setBounds(60,70,280, 20);
+        shortLabel.setBounds(60,130,280, 20);
         shortLabel.setBackground(Color.BLACK);
         shortLabel.setForeground(Color.white);
         shortLabel.setFont(labelFont);
 
-        longLabel.setBounds(60,130,280, 20);
+        longLabel.setBounds(60,190,280, 20);
         longLabel.setBackground(Color.BLACK);
         longLabel.setForeground(Color.white);
         longLabel.setFont(labelFont);
+		
+		nameField = new JTextField();
+		nameField.setBounds(150,40,100,20);
 
         sessionField = new JTextField();
-        sessionField.setBounds(150, 40, 100, 20);
+        sessionField.setBounds(150, 100, 100, 20);
         AbstractDocument sessionDoc = (AbstractDocument) sessionField.getDocument();
         sessionDoc.setDocumentFilter(filter);
         
-        
         shortField = new JTextField();
-        shortField.setBounds(150, 100, 100, 20);
+        shortField.setBounds(150, 160, 100, 20);
         AbstractDocument shortDoc = (AbstractDocument) shortField.getDocument();
         shortDoc.setDocumentFilter(filter);
 
-
         longField = new JTextField();
-        longField.setBounds(150, 160, 100, 20);
+        longField.setBounds(150, 220, 100, 20);
         AbstractDocument longDoc = (AbstractDocument) shortField.getDocument();
         longDoc.setDocumentFilter(filter);
 
         saveButton = new JButton("Save Changes");
-        saveButton.setBounds(100,200,100, 40);
+        saveButton.setBounds(100,260,100, 40);
         saveButton.setBackground(Color.BLACK);
         saveButton.setForeground(Color.white);
         saveButton.setFont(buttonFont);
@@ -107,13 +114,12 @@ public class TimerEditor {
             if the user filled the text fields.*/
             @Override
             public void actionPerformed(ActionEvent e) {
+                
                 tm.sessionMinutes = getSessionMinutes();
                 tm.sBreakMinutes = getShortBreakMinutes();
                 tm.lBreakMinutes = getLongBreakMinutes();
                 
-                System.out.println("Session: " + getSessionMinutes());
-                System.out.println("Long Break: " + getLongBreakMinutes());
-                System.out.println("Short Break: " + getShortBreakMinutes());
+                
                 app.makeUI();
                 inputFrame.dispose();
             }
@@ -122,7 +128,7 @@ public class TimerEditor {
         });
         // This button clears the text fields
         resetButton = new JButton("Reset");
-        resetButton.setBounds(200,200,100, 40);
+        resetButton.setBounds(200,260,100, 40);
         resetButton.setBackground(Color.black);
         resetButton.setForeground(Color.white);
         resetButton.setFont(buttonFont);
@@ -134,7 +140,8 @@ public class TimerEditor {
                 sessionField.setText("");
                 shortField.setText("");
                 longField.setText("");
-            }
+				nameField.setText("");
+			}
 
         });
         KeyListener keyListener = new KeyListener() {
@@ -160,7 +167,7 @@ public class TimerEditor {
         sessionField.addKeyListener(keyListener);
         shortField.addKeyListener(keyListener);
         longField.addKeyListener(keyListener);
-
+		nameField.addKeyListener(keyListener);
 
         //Add the components to the input frame
         inputFrame.add(sessionLabel);
@@ -171,6 +178,8 @@ public class TimerEditor {
         inputFrame.add(longField);
         inputFrame.add(saveButton);
         inputFrame.add(resetButton);
+		inputFrame.add(nameLabel);
+		inputFrame.add(nameField);
         inputFrame.setVisible(true);
     
     }
@@ -186,5 +195,9 @@ public class TimerEditor {
     {
         return (longField.getText().isEmpty())? 15 : Integer.parseInt(longField.getText());
     }
-   
+	public static String getName()
+	{
+		return (nameField.getText().isEmpty())? "Study Session" : nameField.getText();
+	}
+
 }
