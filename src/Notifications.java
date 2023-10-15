@@ -61,13 +61,13 @@ public class Notifications
         frame.setResizable(false);
         frame.setUndecorated(true);
 
-        int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+        /*int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
         int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
         int frameWidth = frame.getWidth();
-        int frameHeight = frame.getHeight();
+        int frameHeight = frame.getHeight();*/
 
-        int x = screenWidth - frameWidth;
-        int y = screenHeight - frameHeight;
+        int x = 0;
+        int y = 0;
 
         frame.setLocation(x, y);
 
