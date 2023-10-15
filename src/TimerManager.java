@@ -17,7 +17,7 @@ public class TimerManager  {
     Audio audio = new Audio(app, this);
     protected Date startTime, finishTime;
 
-    
+    String name = "";
     int sessionMinutes;
     int sBreakMinutes;
     int lBreakMinutes;
@@ -68,12 +68,14 @@ public class TimerManager  {
     public void updateTimer() {  /* F: MAKE A FCKING LOGIC CHART FOR THIS FUNCTION DUMBASS, DON'T TRY TO BRUTE-FORCE IT
                                     M: It works now though, my intelligence needs no logic chart! */ 
         while( i < 1)
-        { setTimer(); i++; }
+        { setTimer(); i++;
+           }
         if (minutes == 0 && seconds == 0) {
             if (app.currentState == TIMER_STATES.SESSION) {
                 sessionsCompleted++;
                 finishTime = new Date();
-                lUpdater.logSessionData(startTime, finishTime, sessionsCompleted, totalMinutesWorked);
+              
+                lUpdater.logSessionData(startTime, finishTime, sessionsCompleted, totalMinutesWorked,name);
                 //audio.ringTone(0);
                 
                 }
