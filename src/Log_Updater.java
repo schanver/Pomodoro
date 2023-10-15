@@ -9,8 +9,8 @@ import java.util.Date;
 
 public class Log_Updater  
 {
-   
-    protected void logSessionData(Date startTime, Date finishTime, int sessionsCompleted, int totalMinutesWorked) {
+   // FIXME: Make the logs override 
+    protected void logSessionData(Date startTime, Date finishTime, int sessionsCompleted, int totalMinutesWorked, String name) {
         // Get the "Documents" directory path for the current user
         String documentsDirectory = System.getProperty("user.home") + "/Documents";
     
@@ -23,9 +23,9 @@ public class Log_Updater
     
         // Create a log entry with timestamps, sessions completed, and total minutes worked
         SimpleDateFormat timestampFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        String logEntry = "Start Time: " + timestampFormat.format(startTime) +
+        String logEntry = name + " - Start Time: " + timestampFormat.format(startTime) +
                           " Finish Time: " + timestampFormat.format(finishTime) +
-                          " - Sessions: " + sessionsCompleted +
+                          " - Pomodoros: " + sessionsCompleted +
                           ", Total Minutes Worked: " + totalMinutesWorked;
     
         try {

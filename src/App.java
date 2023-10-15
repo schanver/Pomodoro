@@ -150,7 +150,7 @@ public class App extends JFrame
             }
             
         });
-        
+            tm.name = TimerEditor.getName();
         //Audio Backwards Button (This button restarts the audio from the beginning)
         /*audioBackwardButton = new JButton(icons.setIcon("resources/restart.png", 70, 40));
         audioBackwardButton.setBounds(105, 260, 70, 40);
@@ -279,7 +279,7 @@ public class App extends JFrame
     public void handleShutdown() {
         if (currentState == TIMER_STATES.SESSION) {
             // Update the log with the current minutes worked
-            lUpdater.logSessionData(tm.startTime, tm.finishTime,tm.sessionsCompleted, tm.totalMinutesWorked);
+            lUpdater.logSessionData(tm.startTime, tm.finishTime,tm.sessionsCompleted, tm.totalMinutesWorked,tm.name);
         }
     }
    
