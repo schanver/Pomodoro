@@ -58,7 +58,7 @@ public class TimerManager  {
   
 
     public void start() {
-        // Start the timer
+        // Starts the timer
         timer.start();
         app.toggleTimer();
     }
@@ -66,7 +66,7 @@ public class TimerManager  {
     
    
     public void updateTimer() {  /* F: MAKE A FCKING LOGIC CHART FOR THIS FUNCTION DUMBASS, DON'T TRY TO BRUTE-FORCE IT
-                                    M: It works now though, my intelligence needs no logic chart! */ 
+                                    M: It works now though, my intelligence doensn't need any logic chart! */ 
         while( i < 1)
         { setTimer(); i++;
            }

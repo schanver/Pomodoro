@@ -74,6 +74,7 @@ public class Audio { // TODO Only this part needs to be fixed
     }
 
     public void playAudio()  //TODO fix the bugs
+                            // Update: Fuck this shit I ain't fixing that.
     {
         
         if( clip != null && clip.isRunning())

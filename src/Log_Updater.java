@@ -9,7 +9,8 @@ import java.util.Date;
 
 public class Log_Updater  
 {
-   // FIXME: Make the logs override 
+   // FIXME: Implement a list of lists to log the data for each pomodoro or save the data in an SQL file.
+   
     protected void logSessionData(Date startTime, Date finishTime, int sessionsCompleted, int totalMinutesWorked, String name) {
         // Get the "Documents" directory path for the current user
         String documentsDirectory = System.getProperty("user.home") + "/Documents";
