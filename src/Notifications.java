@@ -22,11 +22,20 @@ public class Notifications
     Random random = new Random();
 
     protected void showNotification(App app)
-    {
+    {   
+        // TODO: find a way to get rid of the 
+        if( frame != null && frame.isVisible() )
+        {
+            frame.dispose();
+            showNotification(app);
+        }
         this.app = app;
-        final int NOTIFICATION_DELAY = 5000;
-        final int SCREEN_WIDTH = 400;
-        final int SCREEN_HEIGHT = 100;
+        final int NOTIFICATION_DELAY = 3000;
+		int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+		int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+		final int SCREEN_WIDTH = (int)(screenWidth * 0.25);
+		final int SCREEN_HEIGHT = (int)(screenHeight * 0.1);
+
 
         String[] sessionMessages =  {   "Let's get started! Your productive session begins now.",
                                         "Focus time begins! Time to tackle your tasks.",
@@ -61,10 +70,6 @@ public class Notifications
         frame.setResizable(false);
         frame.setUndecorated(true);
 
-        /*int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
-        int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
-        int frameWidth = frame.getWidth();
-        int frameHeight = frame.getHeight();*/
 
         int x = 0;
         int y = 0;
@@ -73,7 +78,7 @@ public class Notifications
 
         // Create a custom title bar panel
         JPanel titleBar = new JPanel(new BorderLayout());
-        titleBar.setSize(300,10);
+        titleBar.setSize(300,30);
         titleBar.setBackground(Color.GRAY);
 
         // Close button
@@ -85,7 +90,7 @@ public class Notifications
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.dispose();
+            disposeTheFrame();
             }
         });
        
@@ -93,22 +98,22 @@ public class Notifications
         notificationLabel  = new JLabel("TEST", JLabel.HORIZONTAL);
         notificationLabel.setForeground(Color.WHITE);
         notificationLabel.setBackground(Color.WHITE);
-        notificationLabel.setFont(new Font("Arial",Font.BOLD,11));
+        notificationLabel.setFont(new Font("Arial",Font.BOLD,16));
 
         frameLabel = new JLabel("", JLabel.HORIZONTAL);
         frameLabel.setForeground(Color.WHITE);
         frameLabel.setBackground(Color.black);
-        frameLabel.setFont(new Font("Arial",Font.BOLD,13));
+        frameLabel.setFont(new Font("Arial",Font.BOLD,15));
         
         Timer frameTimer = new Timer(NOTIFICATION_DELAY, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-              frame.dispose();
+              disposeTheFrame();
             }
             
         });
-        frameTimer.setRepeats(false);
+        frameTimer.setRepeats(true);
         frameTimer.start();
         
     
@@ -142,7 +147,12 @@ public class Notifications
         frame.getContentPane().add(notificationLabel, BorderLayout.CENTER);
         frame.setVisible(true);
     }
-    
+
+		
+    public void disposeTheFrame()
+	{
+		frame.dispose();
+	}
 }
 
 
