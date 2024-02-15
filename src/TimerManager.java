@@ -62,6 +62,19 @@ public class TimerManager  {
         timer.start();
         app.toggleTimer();
     }
+
+
+    //
+    //
+
+    //
+    //
+
+    //
+    //
+
+    //
+    //
     
     
    
@@ -74,6 +87,12 @@ public class TimerManager  {
             if (app.currentState == TIMER_STATES.SESSION) {
                 sessionsCompleted++;
                 finishTime = new Date();
+
+                // TRANSF
+
+                sql SQL = new sql();
+
+                SQL.insert(startTime, finishTime, sessionsCompleted, totalMinutesWorked,name);
               
                 lUpdater.logSessionData(startTime, finishTime, sessionsCompleted, totalMinutesWorked,name);
                 //audio.ringTone(0);
