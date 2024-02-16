@@ -30,19 +30,34 @@ public class sql {
         return connection;
     }
 
-    public void insert(Date startTime, Date finishTime, int sessionsCompleted, int totalMinutesWorked, String name) {
+    public void create(String name){
+
         try {
             PreparedStatement sessioninfo = connect.prepareStatement(
-                    "INSERT INTO Time (startTime, finishTime, sessionsCompleted, totalMinutesWorked, name) VALUES (?, ?, ?, ?, ?)"
-            );
-            sessioninfo.setTimestamp(1, new Timestamp(startTime.getTime()));
-            sessioninfo.setTimestamp(2, new Timestamp(finishTime.getTime()));
-            sessioninfo.setInt(3, sessionsCompleted);
-            sessioninfo.setInt(4, totalMinutesWorked);
-            sessioninfo.setString(5, name);
+                    "CREATE TABLE "+name+"Table (startTime datetime, finishTime datetime, sessionsCompleted int," +
+                            " totalMinutesWorked int, name varchar(255)) " );
 
             sessioninfo.executeUpdate();
             sessioninfo.close();
+        } catch (SQLException e) {
+            System.out.println("Error: Failed to create Table");
+            e.printStackTrace();
+        }
+    }
+
+    public void insert(Date startTime, Date finishTime, int sessionsCompleted, int totalMinutesWorked, String name) {
+        try {
+            PreparedStatement insertion = connect.prepareStatement(
+                    "INSERT INTO "+name+"Table (startTime, finishTime, sessionsCompleted, totalMinutesWorked, name) VALUES (?, ?, ?, ?, ?)"
+            );
+            insertion.setTimestamp(1, new Timestamp(startTime.getTime()));
+            insertion.setTimestamp(2, new Timestamp(finishTime.getTime()));
+            insertion.setInt(3, sessionsCompleted);
+            insertion.setInt(4, totalMinutesWorked);
+            insertion.setString(5, name);
+
+            insertion.executeUpdate();
+            insertion.close();
         } catch (SQLException e) {
             System.out.println("Error: Failed to insert data");
             e.printStackTrace();

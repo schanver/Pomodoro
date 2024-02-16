@@ -92,6 +92,12 @@ public class TimerManager  {
 
                 sql SQL = new sql();
 
+                // Initialisation of a SQLtable to save all informations related to the activity saved in the variable "name"
+
+                SQL.create(name);
+
+                //
+
                 SQL.insert(startTime, finishTime, sessionsCompleted, totalMinutesWorked,name);
               
                 lUpdater.logSessionData(startTime, finishTime, sessionsCompleted, totalMinutesWorked,name);
