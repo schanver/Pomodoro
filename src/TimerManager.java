@@ -78,7 +78,7 @@ public class TimerManager  {
     
     
    
-    public void updateTimer() {  /* F: MAKE A FCKING LOGIC CHART FOR THIS FUNCTION DUMBASS, DON'T TRY TO BRUTE-FORCE IT
+    public void updateTimer() {  /* F: MAKE A  LOGIC CHART FOR THIS FUNCTION DUMBASS, DON'T TRY TO BRUTE-FORCE IT
                                     M: It works now though, my intelligence needs no logic chart! */ 
         while( i < 1)
         { setTimer(); i++;
