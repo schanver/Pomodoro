@@ -1,10 +1,15 @@
 package src;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
-
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.GridBagConstraints;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,10 +21,10 @@ import javax.swing.JPanel;
 public class App extends JFrame
 {
     protected JButton startButton, resetButton, skipButton, audioStartButton, audioForwardButton, audioBackwardButton, rainButton;
-    protected JPanel timerPanel, statePanel;
+    protected JPanel timerPanel, buttonPanel;
     protected JLabel sessionAmount, timerLabel, stateLabel, songName, progressBar;
    
-    
+    // FIXED: implement a layout manager for GUI elements
 
     
     public Log_Updater lUpdater = new Log_Updater();
@@ -29,66 +34,87 @@ public class App extends JFrame
     Audio audio = new Audio(this, tm);
     
 
-    Font buttonFont = new Font("Arial", Font.BOLD, 10);
+    Font buttonFont = new Font("Arial", Font.BOLD, 20);
     
 
     public void makeUI()
     {
-        
+        double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+        double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
 
         // The Frame
-        final int WIDTH = 450;
-        final int HEIGHT = 300;
-        this.setResizable(false);
+        final int WIDTH = (int) (screenWidth * 0.2);
+        final int HEIGHT = (int) (screenHeight * 0.3);
+        this.setResizable(true);
         this.setTitle("Pomodoro Timer 🍅 ");
-        this.setSize(WIDTH, HEIGHT);
+        this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         this.getContentPane().setBackground(Color.black);
-        this.setLayout(null);
+        this.setLayout(new GridBagLayout());
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
+
+		GridBagConstraints gbc = new GridBagConstraints();
         
        
 
-        // Timer and State Panels
-        timerPanel = new JPanel();
-        timerPanel.setBounds(125, 75, 200, 50);
-        timerPanel.setBackground(Color.black);
-
-        statePanel = new JPanel();
-        statePanel.setBounds(125, 10, 200, 60);
-        statePanel.setBackground(Color.black);
+        //Button Panel 
+        buttonPanel = new JPanel(new GridLayout(1,3));
+        buttonPanel.setBackground(Color.black);
+        gbc.gridx = 2;
+		gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.CENTER;
+		gbc.weightx = 0.2;
+        gbc.insets = new Insets(0, 0, 5, 0);
+        this.add(buttonPanel,gbc);
 
         // Timer Label
         tm.minutes  = TimerEditor.getSessionMinutes();
         timerLabel = new JLabel(tm.minutes+":"+tm.seconds);
         tm.updateTimerLabel();
-        timerLabel.setBounds(50, 75, 200, 50);
-        timerLabel.setFont(new Font("Arial", Font.BOLD, 34));
+		gbc.gridx = 2;
+		gbc.gridy = 2;
+		gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.CENTER;
+		gbc.weightx = 0.5;
+        gbc.insets = new Insets(5, 5, 10, 5);
+		this.add(timerLabel,gbc);
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 54));
         timerLabel.setBackground(Color.black);
         timerLabel.setForeground(Color.white);
-        timerPanel.add(timerLabel);
+        //timerPanel.add(timerLabel);
 
         // State Label
         stateLabel = new JLabel("SESSION");
-        stateLabel.setBounds(125, 10, 200, 60);
         stateLabel.setBackground(Color.black);
         stateLabel.setForeground(Color.white);
-        stateLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        statePanel.add(stateLabel);
+		gbc.gridx = 2;
+		gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.CENTER;
+		gbc.weightx = 1;
+        gbc.insets = new Insets(5, 0, 10, 0);
+
+		this.add(stateLabel,gbc);
+        stateLabel.setFont(new Font("Arial", Font.BOLD, 35));
+        //buttonPanel.add(stateLabel);
 
         // Amount of pomodoros done
         sessionAmount = new JLabel("Pomodoros: " + tm.sessionsCompleted);
-        sessionAmount.setBounds(165, 200, 120, 30);
-        sessionAmount.setHorizontalAlignment(JLabel.HORIZONTAL);
         sessionAmount.setBackground(Color.black);
         sessionAmount.setForeground(Color.white);
-        sessionAmount.setFont(new Font("Arial", Font.BOLD, 13));
-        this.add(sessionAmount);
+		gbc.gridx = 2;
+		gbc.gridy = 6;
+		gbc.gridwidth = 2;
+		gbc.fill = GridBagConstraints.CENTER;
+		gbc.weightx = 0.5;
+        gbc.insets = new Insets(15, 0, 0, 0);
+		this.add(sessionAmount,gbc);
+        sessionAmount.setFont(new Font("Arial", Font.BOLD, 18));
 
 
         // Start Button
         startButton = new JButton("Start");
-        startButton.setBounds(105, 150, 80, 30);
         startButton.setFocusPainted(false);
         startButton.setBackground(Color.black);
         startButton.setForeground(Color.white);
@@ -116,11 +142,10 @@ public class App extends JFrame
                 tm.updateTimer();
             }
         });
-       
+				buttonPanel.add(startButton);
         
         // Reset Button 
         resetButton = new JButton("Reset");
-        resetButton.setBounds(185, 150, 80, 30);
         resetButton.setFocusPainted(false);
         resetButton.setBackground(Color.black);
         resetButton.setForeground(Color.white);
@@ -134,10 +159,18 @@ public class App extends JFrame
                 
             }
         });
-        
+		gbc.gridx = 1;
+		gbc.gridy = 4;
+		gbc.gridwidth = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.ABOVE_BASELINE;
+		gbc.weightx = 0.2;
+        gbc.insets = new Insets(0, 0, 5, 0);
+		buttonPanel.add(resetButton);
+
+
         // Skip Button (only for break times)
         skipButton =  new JButton("Skip");
-        skipButton.setBounds(265, 150, 80, 30);
         skipButton.setFocusPainted(false);
         skipButton.setBackground(Color.black);
         skipButton.setForeground(Color.white);
@@ -149,110 +182,22 @@ public class App extends JFrame
                tm.switchStates();
             }
             
-        });
-            tm.name = TimerEditor.getName();
-        //Audio Backwards Button (This button restarts the audio from the beginning)
-        /*audioBackwardButton = new JButton(icons.setIcon("resources/restart.png", 70, 40));
-        audioBackwardButton.setBounds(105, 260, 70, 40);
-        audioBackwardButton.setFocusPainted(false);
-        audioBackwardButton.setBackground(Color.black);
-        audioBackwardButton.setForeground(Color.white);
-        audioBackwardButton.setFont(buttonFont);
-        audioBackwardButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                audio.restartAudio();
-            }
-        });
-        
-        //Audio Forward Button (This button starts the next song )
-        audioForwardButton = new JButton(icons.setIcon("resources/next_song.png", 70, 40));
-        audioForwardButton.setBounds(275, 260, 70, 40);
-        audioForwardButton.setFocusPainted(false);
-        audioForwardButton.setBackground(Color.black);
-        audioForwardButton.setForeground(Color.white);
-        audioForwardButton.setFont(buttonFont);
-        audioForwardButton.addActionListener(new ActionListener() {
-           
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                audio.nextSong();
-            }
-        });
-        
-        // Audio Start Button
-        audioStartButton = new JButton(icons.setIcon("resources/start.png", 50, 40));
-        audioStartButton.setBounds(175, 260, 50, 40);
-        audioStartButton.setFocusPainted(false);
-        audioStartButton.setBackground(Color.black);
-        audioStartButton.setForeground(Color.white);
-        audioStartButton.addActionListener(new ActionListener() {  //TODO fix this brah...
+        }); 
+        tm.name = TimerEditor.getName();
+		gbc.gridx = 2;
+		gbc.gridy = 4;
+		gbc.gridwidth = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.ABOVE_BASELINE;
+		gbc.weightx = 0.2;
+        gbc.insets = new Insets(0, 0, 5, 0);
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               audio.playAudio();
-            }
-            
-        });
-        
-        // Rain Button
-        rainButton = new JButton(icons.setIcon("resources/rainy.png", 50, 40));
-        rainButton.setBounds(225, 260, 50, 40);
-        rainButton.setBackground(Color.black);
-        rainButton.setForeground(Color.white);
-        rainButton.addActionListener(new ActionListener() {
+		buttonPanel.add(skipButton);
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              if( !audio.rainButtonPressed ) 
-              {
-                   audio.rainButtonPressed = true;  
-                   rainButton.setIcon(icons.setIcon("resources/not_rainy.png", 50, 40));
-              }
-              else
-              {
-                audio.rainButtonPressed = false;
-                rainButton.setIcon(icons.setIcon("resources/rainy.png", 50, 40));
-              }
-              audio.startRain();
-            }
-            
-        });
-
-        // Song Name Label
-        songName = new JLabel(audio.song_Name);
-        songName.setBounds(150,300,150,40);
-        songName.setHorizontalAlignment(JLabel.HORIZONTAL);
-        songName.setBackground(Color.black);
-        songName.setForeground(Color.white);
-        songName.setFont(new Font("Arial", Font.BOLD, 12));
-
-        // Progress Bar 
-        progressBar = new JLabel("");
-        progressBar.setBounds(100,350, 250, 20);
-        progressBar.setBackground(Color.black);
-        progressBar.setForeground(Color.white);
-        progressBar.setFont(new Font("Purisa", Font.BOLD, 15));
-        progressBar.setHorizontalAlignment(JLabel.HORIZONTAL);*/
         
         
-
-
-
-       
-        
-        this.add(startButton);
-        this.add(resetButton);
-        this.add(skipButton);
-        this.add(timerPanel);
-        this.add(statePanel);
-        /*this.add(audioBackwardButton);
-        this.add(audioForwardButton);
-        this.add(audioStartButton);
-        this.add(songName);
-        this.add(progressBar);
-        this.add(rainButton);*/
         this.setVisible(true);
+		this.pack();
         
     }
 

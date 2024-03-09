@@ -3,10 +3,15 @@ package src;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.*;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -19,28 +24,35 @@ public class TimerEditor {
         TimerManager tm;
         App app;
         static JFrame inputFrame;
+        static JPanel buttonPanel,namePanel,sesPanel,shortPanel,longPanel;
         static JLabel nameLabel,sessionLabel, shortLabel, longLabel;
         static JTextField nameField,sessionField, shortField, longField;
         static JButton saveButton,resetButton;
-        static Font labelFont = new Font("Arial", Font.PLAIN, 10);
-        static Font buttonFont = new Font("Arial",Font.BOLD,8 );
-    
+        static Font labelFont = new Font("Arial", Font.BOLD, 15);
+        static Font buttonFont = new Font("Arial",Font.BOLD,12 );
+        static Font fieldFont = new Font("Arial",Font.PLAIN, 55);
    
     protected static void makeUI(App app, TimerManager tm)
     {
+        double screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+        double screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+
+        // The Frame
+        final int WIDTH = (int) (screenWidth * 0.125);;
+        final int HEIGHT = (int) (screenHeight * 0.25);
         
        // Create the input frame
         inputFrame = new JFrame();
         inputFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        inputFrame.setSize(400, 350);
-        inputFrame.setResizable(false);
+        inputFrame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        inputFrame.setResizable(true);
         inputFrame.setLocationRelativeTo(null);
         inputFrame.getContentPane().setBackground(Color.black);
-        inputFrame.setTitle("Timer Editor ⏲️");
-        inputFrame.setLayout(null);
+        inputFrame.setTitle("Timer Editor  ");
+        inputFrame.setLayout(new GridLayout(5,1));
 
         // This variable is used to filter the user input so that the user can only enter integer values.
-         DocumentFilter filter = new DocumentFilter() {
+        DocumentFilter filter = new DocumentFilter() {
             @Override
             public void insertString(DocumentFilter.FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
                 if (text.matches("\\d+")) {
@@ -57,52 +69,92 @@ public class TimerEditor {
         };
 
         // Classical GUI implementation brah, not much to explain here. Nur eine große Zeitverschwendung.
+        GridBagConstraints gbc = new GridBagConstraints();
 
-        sessionLabel = new JLabel("Enter the duration of sessions : (default is 45 minutes)", JLabel.HORIZONTAL);
-        shortLabel = new JLabel("Enter the duration of short breaks : (default is 5 minutes)", JLabel.HORIZONTAL);
-        longLabel = new JLabel("Enter the duration of long breaks : (default is 15 minutes)", JLabel.HORIZONTAL);
-		nameLabel = new  JLabel("Enter the name of the activity: (default is Study Session)", JLabel.HORIZONTAL);	
-		
-		nameLabel.setBounds(60,10,280,20);
-		nameLabel.setBackground(Color.black);
+        namePanel = new JPanel(new GridLayout(2,1));
+        namePanel.setBackground(Color.black);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.NORTH;
+        inputFrame.add(namePanel,gbc);
+
+        nameLabel = new  JLabel("Enter the name of the activity: (default is Study Session)");	
+        nameLabel.setBackground(Color.black);
 		nameLabel.setForeground(Color.white);
 		nameLabel.setFont(labelFont);
 
-        sessionLabel.setBounds(60, 70, 280, 20);
+        nameField = new JTextField();
+        nameField.setFont(buttonFont);
+
+        namePanel.add(nameLabel);
+        namePanel.add(nameField);
+
+        
+        sesPanel = new JPanel(new GridLayout(2,1));
+        sesPanel.setBackground(Color.black);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        inputFrame.add(sesPanel,gbc);
+
+        sessionLabel = new JLabel("Enter the duration of sessions : (default is 45 minutes)");
         sessionLabel.setBackground(Color.BLACK);
         sessionLabel.setForeground(Color.WHITE);
         sessionLabel.setFont(labelFont);
+
+        sessionField = new JTextField();
+        sessionField.setFont(buttonFont);
+
+        AbstractDocument sessionDoc = (AbstractDocument) sessionField.getDocument();
+        sessionDoc.setDocumentFilter(filter);
+
+        sesPanel.add(sessionLabel);
+        sesPanel.add(sessionField);
         
-        shortLabel.setBounds(60,130,280, 20);
+        shortPanel = new JPanel(new GridLayout(2,1));
+        shortPanel.setBackground(Color.black);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        inputFrame.add(shortPanel,gbc);
+
+        shortLabel = new JLabel("Enter the duration of short breaks : (default is 5 minutes)");
         shortLabel.setBackground(Color.BLACK);
         shortLabel.setForeground(Color.white);
         shortLabel.setFont(labelFont);
 
-        longLabel.setBounds(60,190,280, 20);
+        shortField = new JTextField();
+        shortField.setFont(buttonFont);
+        
+        AbstractDocument shortDoc = (AbstractDocument) shortField.getDocument();
+        shortDoc.setDocumentFilter(filter);
+
+        shortPanel.add(shortLabel);
+        shortPanel.add(shortField);
+
+        longPanel = new JPanel(new GridLayout(2,1));
+        longPanel.setBackground(Color.black);
+        gbc.gridx = 0;
+        gbc.gridy = 3; 
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        inputFrame.add(longPanel,gbc);
+
+        longLabel = new JLabel("Enter the duration of long breaks : (default is 15 minutes)");
         longLabel.setBackground(Color.BLACK);
         longLabel.setForeground(Color.white);
         longLabel.setFont(labelFont);
 		
-		nameField = new JTextField();
-		nameField.setBounds(150,40,100,20);
-
-        sessionField = new JTextField();
-        sessionField.setBounds(150, 100, 100, 20);
-        AbstractDocument sessionDoc = (AbstractDocument) sessionField.getDocument();
-        sessionDoc.setDocumentFilter(filter);
-        
-        shortField = new JTextField();
-        shortField.setBounds(150, 160, 100, 20);
-        AbstractDocument shortDoc = (AbstractDocument) shortField.getDocument();
-        shortDoc.setDocumentFilter(filter);
-
         longField = new JTextField();
-        longField.setBounds(150, 220, 100, 20);
+        longField.setFont(buttonFont);
+        
         AbstractDocument longDoc = (AbstractDocument) shortField.getDocument();
         longDoc.setDocumentFilter(filter);
 
+        longPanel.add(longLabel);
+        longPanel.add(longField);
+
         saveButton = new JButton("Save Changes");
-        saveButton.setBounds(100,260,100, 40);
+       
         saveButton.setBackground(Color.BLACK);
         saveButton.setForeground(Color.white);
         saveButton.setFont(buttonFont);
@@ -128,7 +180,6 @@ public class TimerEditor {
         });
         // This button clears the text fields
         resetButton = new JButton("Reset");
-        resetButton.setBounds(200,260,100, 40);
         resetButton.setBackground(Color.black);
         resetButton.setForeground(Color.white);
         resetButton.setFont(buttonFont);
@@ -169,17 +220,19 @@ public class TimerEditor {
         longField.addKeyListener(keyListener);
 		nameField.addKeyListener(keyListener);
 
+        buttonPanel = new JPanel(new GridLayout(1,2));
+        gbc.gridx = 0;
+        gbc.gridy = 3; 
+        gbc.fill = GridBagConstraints.SOUTH;
+
+        buttonPanel.add(saveButton);
+        buttonPanel.add(resetButton);
+        inputFrame.add(buttonPanel,gbc);
         //Add the components to the input frame
-        inputFrame.add(sessionLabel);
-        inputFrame.add(sessionField);
-        inputFrame.add(shortLabel);
-        inputFrame.add(shortField);
-        inputFrame.add(longLabel);
-        inputFrame.add(longField);
-        inputFrame.add(saveButton);
-        inputFrame.add(resetButton);
-		inputFrame.add(nameLabel);
-		inputFrame.add(nameField);
+        
+		
+        
+        inputFrame.pack();
         inputFrame.setVisible(true);
     
     }

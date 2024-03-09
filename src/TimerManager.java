@@ -58,7 +58,7 @@ public class TimerManager  {
   
 
     public void start() {
-        // Start the timer
+        // Starts the timer
         timer.start();
         app.toggleTimer();
     }
