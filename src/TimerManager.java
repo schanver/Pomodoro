@@ -62,11 +62,24 @@ public class TimerManager  {
         timer.start();
         app.toggleTimer();
     }
+
+
+    //
+    //
+
+    //
+    //
+
+    //
+    //
+
+    //
+    //
     
     
    
-    public void updateTimer() {  /* F: MAKE A FCKING LOGIC CHART FOR THIS FUNCTION DUMBASS, DON'T TRY TO BRUTE-FORCE IT
-                                    M: It works now though, my intelligence doensn't need any logic chart! */ 
+    public void updateTimer() {  /* F: MAKE A  LOGIC CHART FOR THIS FUNCTION DUMBASS, DON'T TRY TO BRUTE-FORCE IT
+                                    M: It works now though, my intelligence needs no logic chart! */ 
         while( i < 1)
         { setTimer(); i++;
            }
@@ -74,6 +87,18 @@ public class TimerManager  {
             if (app.currentState == TIMER_STATES.SESSION) {
                 sessionsCompleted++;
                 finishTime = new Date();
+
+                // TRANSF
+
+                sql SQL = new sql();
+
+                // Initialisation of a SQLtable to save all informations related to the activity saved in the variable "name"
+
+                SQL.create(name);
+
+                //
+
+                SQL.insert(startTime, finishTime, sessionsCompleted, totalMinutesWorked,name);
               
                 lUpdater.logSessionData(startTime, finishTime, sessionsCompleted, totalMinutesWorked,name);
                 //audio.ringTone(0);

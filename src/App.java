@@ -224,6 +224,17 @@ public class App extends JFrame
     public void handleShutdown() {
         if (currentState == TIMER_STATES.SESSION) {
             // Update the log with the current minutes worked
+
+
+            //TRANSFER 
+            //
+            //
+            //
+            //
+            //
+            //
+            sql SQL = new sql();
+            SQL.insert(tm.startTime, tm.finishTime,tm.sessionsCompleted, tm.totalMinutesWorked,tm.name);
             lUpdater.logSessionData(tm.startTime, tm.finishTime,tm.sessionsCompleted, tm.totalMinutesWorked,tm.name);
         }
     }
